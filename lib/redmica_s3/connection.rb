@@ -86,6 +86,9 @@ module RedmicaS3
           access_key_id:      s3_options[:access_key_id],
           secret_access_key:  s3_options[:secret_access_key]
         }
+        if s3_options[:session_token].present?
+          options[:session_token] = s3_options[:session_token]
+        end
         if endpoint.present?
           options[:endpoint] = endpoint
         elsif region.present?
