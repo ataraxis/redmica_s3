@@ -55,13 +55,21 @@ module RedmicaS3
           }
         end
 
-        object = object(disk_filename, target_folder)
-        object.put(options)
+        begin
+          object = object(disk_filename, target_folder)
+          object.put(options)
+        ensure
+          @@conn = nil
+        end
       end
 
       def delete(filename, target_folder = self.folder)
-        object = object(filename, target_folder)
-        object.delete
+        begin
+          object = object(filename, target_folder)
+          object.delete
+        ensure
+          @@conn = nil
+        end
       end
 
       def object(filename, target_folder = self.folder)
@@ -70,13 +78,17 @@ module RedmicaS3
       end
 
       def move_object(src_filename, dest_filename, target_folder = self.folder)
-        src_object = object(src_filename, target_folder)
-        return false  unless src_object.exists?
-        dest_object = object(dest_filename, target_folder)
-        return false  if dest_object.exists?
+        begin
+          src_object = object(src_filename, target_folder)
+          return false  unless src_object.exists?
+          dest_object = object(dest_filename, target_folder)
+          return false  if dest_object.exists?
 
-        src_object.move_to(dest_object)
-        true
+          src_object.move_to(dest_object)
+          true
+        ensure
+          @@conn = nil
+        end
       end
 
 # private
